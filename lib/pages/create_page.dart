@@ -1,15 +1,12 @@
-import 'dart:math';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pattern_bloc/model/post_model.dart';
-import 'package:pattern_bloc/services/http_service.dart';
-
-
-import 'home_page.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pattern_bloc/blocs/create_post_cubit.dart';
+import 'package:pattern_bloc/blocs/create_post_state.dart';
+import 'package:pattern_bloc/views/view_of_create.dart';
 
 class CreatePage extends StatefulWidget {
-  static final String id = 'create_page';
-
   const CreatePage({Key key}) : super(key: key);
 
   @override
@@ -18,96 +15,37 @@ class CreatePage extends StatefulWidget {
 
 class _CreatePageState extends State<CreatePage> {
   bool isLoading = false;
-  TextEditingController _titleTextEditingController = TextEditingController();
-  TextEditingController _bodyTextEditingController = TextEditingController();
-
-  _apiPostCreate() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    Post post = Post(
-        number: _titleTextEditingController.text,
-        fullname: _bodyTextEditingController.text,
-        userId: Random().nextInt(99999));
-
-    var response =
-        await Network.GET(Network.API_CREATE, Network.paramsCreate(post));
-
-    setState(() {
-      if (response != null) {
-        Navigator.pushNamedAndRemoveUntil(
-            context, HomePage.id, (route) => false);
-      }
-
-      isLoading = false;
+  TextEditingController titleController = TextEditingController();
+  TextEditingController bodyController = TextEditingController();
+  _finish(BuildContext context ){
+    SchedulerBinding.instance.addPersistentFrameCallback((timeStamp) {
+      Navigator.pop(context, "result");
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Create'),
-      ),
-      body: Stack(
-        children: [
-          Container(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              children: [
-                // Title
-                Container(
-                  height: 50,
+    return BlocProvider(
+      create: (context) => CreatePostCubit(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Add Post"),
+        ),
+        body: BlocBuilder<CreatePostCubit, CreatePostState>(
+          builder: (BuildContext context, CreatePostState state){
+            if(state is CreatePostLoading){
+              return viewOfCreate(true, context, titleController, bodyController);
+            }
+            if(state is CreatePostLoaded){
+             _finish(context);
+            }
+            if(state is CreatePostError){
 
-                  child: Center(
-                    child: TextField(
-                      controller: _titleTextEditingController,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                      decoration: InputDecoration(
-                        labelText: 'Title',
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ),
+            }
+            return viewOfCreate(false, context, titleController, bodyController);
+          },
 
-                SizedBox(
-                  height: 10,
-                ),
-
-                // Body
-                Container(
-                  height: 200,
-                  padding: EdgeInsets.all(5),
-                  child: TextField(
-                    controller: _bodyTextEditingController,
-                    style: TextStyle(fontSize: 18),
-                    maxLines: 10,
-                    decoration: InputDecoration(
-                      labelText: 'Body',
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          isLoading
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : SizedBox.shrink(),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-        onPressed: () {
-          _apiPostCreate();
-        },
-        child: Icon(Icons.done),
+          )
       ),
     );
   }

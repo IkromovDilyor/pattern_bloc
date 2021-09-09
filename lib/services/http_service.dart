@@ -5,15 +5,15 @@ import 'package:pattern_bloc/model/post_model.dart';
 
 
 class Network {
-  static String BASE = "61388f76163b560017039f98.mockapi.io";
+  static String BASE = "jsonplaceholder.typicode.com";
   static Map<String,String> headers = {'Content-Type':'application/json; charset=UTF-8'};
 
   /* Http Apis */
 
-  static String API_LIST = "/dilyor_contact/contacts";
-  static String API_CREATE = "/dilyor_contact/contacts";
-  static String API_UPDATE = "/dilyor_contact/contacts"; //{id}
-  static String API_DELETE = "/dilyor_contact/contacts"; //{id}
+  static String API_LIST = "/posts";
+  static String API_CREATE = "/posts";
+  static String API_UPDATE = "/posts/"; //{id}
+  static String API_DELETE = "/posts/"; //{id}
 
   /* Http Requests */
 
@@ -64,8 +64,8 @@ class Network {
   static Map<String, String> paramsCreate(Post post) {
     Map<String, String> params = new Map();
     params.addAll({
-      'number': post.number,
-      'fullname': post.fullname,
+      'title': post.title,
+      'body': post.body,
       'userId': post.userId.toString(),
     });
     return params;
@@ -75,8 +75,8 @@ class Network {
     Map<String, String> params = new Map();
     params.addAll({
       'id': post.id.toString(),
-      'number': post.number,
-      'fullname': post.fullname,
+      'title': post.title,
+      'body': post.body,
       'userId': post.userId.toString(),
     });
     return params;

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:pattern_bloc/blocs/list_post_cubit.dart';
 import 'package:pattern_bloc/model/post_model.dart';
-import 'package:pattern_bloc/pages/update_page.dart';
+
 
 Widget itemOfPost(BuildContext context,Post post){
   return Slidable(
@@ -15,13 +15,13 @@ Widget itemOfPost(BuildContext context,Post post){
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            post.number.toUpperCase(),style: TextStyle(
+            post.title.toUpperCase(),style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold
           ),
           ),
           SizedBox(height: 5,),
-          Text(post.fullname)
+          Text(post.body)
 
         ],
       ),
@@ -32,7 +32,8 @@ Widget itemOfPost(BuildContext context,Post post){
         color: Colors.indigo,
         icon:Icons.edit,
         onTap: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => UpdatePage(title: post.number, body: post.fullname)));
+          BlocProvider.of<ListPostCubit>(context).callUpdatePage(context, post);
+          //Navigator.push(context, MaterialPageRoute(builder: (context) => UpdatePage(title: post.title, body: post.body)));
         },
       )
 

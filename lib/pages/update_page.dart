@@ -1,126 +1,57 @@
-import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pattern_bloc/blocs/update_post_cubit.dart';
+import 'package:pattern_bloc/blocs/update_post_state.dart';
 import 'package:pattern_bloc/model/post_model.dart';
-import 'package:pattern_bloc/services/http_service.dart';
+import 'package:pattern_bloc/views/view_of_update.dart';
 
+class UpdatePage extends StatelessWidget {
+  Post post;
 
-import 'home_page.dart';
+  UpdatePage({this.post});
 
-class UpdatePage extends StatefulWidget {
-  static final String id = 'update_page';
+  TextEditingController titleController = new TextEditingController();
+  TextEditingController bodyController = new TextEditingController();
 
-  String title, body;
-  UpdatePage({this.title, this.body, Key key}) : super(key: key);
-
-  @override
-  _UpdatePageState createState() => _UpdatePageState();
-}
-
-class _UpdatePageState extends State<UpdatePage> {
-  bool isLoading = false;
-  TextEditingController _titleTextEditingController = TextEditingController();
-  TextEditingController _bodyTextEditingController = TextEditingController();
-
-  _apiPostUpdate() async {
-    setState(() {
-      isLoading = true;
+  _finish(BuildContext context) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      Navigator.pop(context, "result");
     });
-
-    Post post = Post(
-        id: Random().nextInt(999),
-        number: _titleTextEditingController.text,
-        fullname: _bodyTextEditingController.text,
-        userId: Random().nextInt(999));
-
-    var response =
-        await Network.PUT(Network.API_UPDATE , Network.paramsUpdate(post));
-
-    setState(() {
-      if (response != null) {
-        Navigator.pushNamedAndRemoveUntil(
-            context, HomePage.id, (route) => false);
-      }
-
-      isLoading = false;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    _titleTextEditingController.text = widget.title;
-    _bodyTextEditingController.text = widget.body;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Update'),
-      ),
-      body: Stack(
-        children: [
-          Container(
-            padding: EdgeInsets.all(10),
-            child: Column(
-              children: [
-                // Title
-                Container(
-                  height: 100,
-                  padding: EdgeInsets.all(5),
+    titleController.text = post.title;
+    bodyController.text = post.body;
 
-                  child: Center(
-                    child: TextField(maxLines: 2,
-                      controller: _titleTextEditingController,
-                      style: TextStyle(fontWeight: FontWeight.bold,
-                        ),
-                      decoration: InputDecoration(
-                        labelText: 'Title',
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ),
+    return BlocProvider(
+      create: (context) => UpdatePostCubit(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Update a Post"),
+        ),
+        body: BlocBuilder<UpdatePostCubit, UpdatePostState>(
+          builder: (BuildContext context, UpdatePostState state) {
+            if(state is UpdatePostLoading){
+              String title = titleController.text.toString();
+              String body = bodyController.text.toString();
+              Post post = Post(id: this.post.id,title: title, body: body, userId: this.post.userId);
+              return viewOfUpdate(true,context,post, titleController, bodyController);
+            }
+            if(state is UpdatePostLoaded){
+              _finish(context);
+            }
+            if(state is UpdatePostError){
 
-
-
-
-                // Body
-                Container(
-                  height: 500,
-                  padding: EdgeInsets.all(5),
-
-                  child: TextField(
-                    controller: _bodyTextEditingController,
-                    style: TextStyle(fontSize: 20),
-                    maxLines: 10,
-                    decoration: InputDecoration(
-                      labelText: 'Body',
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          isLoading
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : SizedBox.shrink(),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-        onPressed: () {
-          _apiPostUpdate();
-        },
-        child: Icon(Icons.done),
+            }
+            return viewOfUpdate(false,context,post, titleController, bodyController);
+          },
+        ),
       ),
     );
   }
+
 }

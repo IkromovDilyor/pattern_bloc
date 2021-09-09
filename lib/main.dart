@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pattern_bloc/pages/create_page.dart';
+
 import 'package:pattern_bloc/pages/home_page.dart';
 
 import 'blocs/list_post_cubit.dart';
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         HomePage.id:(context)=>HomePage(),
-        CreatePage.id:(context)=>CreatePage()
+        //CreatePage.id:(context)=>CreatePage()
       },
     );
   }

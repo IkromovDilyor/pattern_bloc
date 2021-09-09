@@ -1,12 +1,13 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pattern_bloc/model/post_model.dart';
+import 'package:pattern_bloc/pages/create_page.dart';
+import 'package:pattern_bloc/pages/update_page.dart';
 import 'package:pattern_bloc/services/http_service.dart';
-
 import 'list_post_state.dart';
-
 class ListPostCubit extends  Cubit<ListPostState>{
- //ListPostCubit(ListPostState state) : super(state);
-ListPostCubit():super(ListPostInit());
+  ListPostCubit():super(ListPostInit());
 void apiPostList()async{
   final response =await Network.GET(Network.API_LIST, Network.paramsEmpty());
   print(response);
@@ -24,9 +25,25 @@ void apiPostDelete(Post post ) async{
   if(response!=null){
     apiPostList();
   }else{
-    emit(ListPostError(error: "Couldn't delete post"));
+    emit(ListPostError(error: "Couldn'n"));
   }
-
 }
-
+void callCreatePage(BuildContext context )async {
+  var results=await Navigator.of(context).push(MaterialPageRoute(
+      builder: (context)=>CreatePage()
+  ));
+  if(results!=null){
+    BlocProvider.of<ListPostCubit>(context).apiPostList();
+  }
+}
+  void callUpdatePage(BuildContext context,Post post) async {
+    print(post.toJson());
+    var results = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => UpdatePage(
+          post: post,
+        )));
+    if (results != null) {
+      BlocProvider.of<ListPostCubit>(context).apiPostList();
+    }
+  }
 }
