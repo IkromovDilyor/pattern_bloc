@@ -15,13 +15,13 @@ Widget itemOfPost(BuildContext context,Post post){
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            post.title.toUpperCase(),style: TextStyle(
+            post.fullname.toUpperCase(),style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold
           ),
           ),
           SizedBox(height: 5,),
-          Text(post.body)
+          Text(post.number)
 
         ],
       ),

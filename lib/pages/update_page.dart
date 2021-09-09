@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -24,8 +23,8 @@ class UpdatePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    titleController.text = post.title;
-    bodyController.text = post.body;
+    titleController.text = post.fullname;
+    bodyController.text = post.number;
 
     return BlocProvider(
       create: (context) => UpdatePostCubit(),
@@ -38,7 +37,7 @@ class UpdatePage extends StatelessWidget {
             if(state is UpdatePostLoading){
               String title = titleController.text.toString();
               String body = bodyController.text.toString();
-              Post post = Post(id: this.post.id,title: title, body: body, userId: this.post.userId);
+              Post post = Post(id: this.post.id,fullname: title, number: body, userId: this.post.userId);
               return viewOfUpdate(true,context,post, titleController, bodyController);
             }
             if(state is UpdatePostLoaded){

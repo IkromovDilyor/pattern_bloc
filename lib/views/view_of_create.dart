@@ -35,8 +35,8 @@ Widget viewOfCreate(bool isLoading , BuildContext context, TextEditingController
             FlatButton(
               onPressed: (){
                 Post post=Post(
-                  title:titleController.text.toString(),
-                  body: bodyController.text.toString(),
+                  fullname:titleController.text.toString(),
+                  number: bodyController.text.toString(),
 
                 );
                BlocProvider.of<CreatePostCubit>(context).apiPostCreate(post);

@@ -4,16 +4,18 @@ import 'package:http/http.dart';
 import 'package:pattern_bloc/model/post_model.dart';
 
 
+
+
 class Network {
-  static String BASE = "jsonplaceholder.typicode.com";
+  static String BASE = "61388f76163b560017039f98.mockapi.io";
   static Map<String,String> headers = {'Content-Type':'application/json; charset=UTF-8'};
 
   /* Http Apis */
 
-  static String API_LIST = "/posts";
-  static String API_CREATE = "/posts";
-  static String API_UPDATE = "/posts/"; //{id}
-  static String API_DELETE = "/posts/"; //{id}
+  static String API_LIST = "/dilyor_contact/contacts";
+  static String API_CREATE = "/dilyor_contact/contacts";
+  static String API_UPDATE = "/dilyor_contact/contacts"; //{id}
+  static String API_DELETE = "/dilyor_contact/contacts"; //{id}
 
   /* Http Requests */
 
@@ -64,9 +66,10 @@ class Network {
   static Map<String, String> paramsCreate(Post post) {
     Map<String, String> params = new Map();
     params.addAll({
-      'title': post.title,
-      'body': post.body,
-      'userId': post.userId.toString(),
+      'id': id,
+      'fullname': fullname,
+      'number': number,
+      'userId': userId,
     });
     return params;
   }
@@ -74,10 +77,10 @@ class Network {
   static Map<String, String> paramsUpdate(Post post) {
     Map<String, String> params = new Map();
     params.addAll({
-      'id': post.id.toString(),
-      'title': post.title,
-      'body': post.body,
-      'userId': post.userId.toString(),
+      'id': id,
+      'fullname': fullname,
+      'number': number,
+      'userId': userId,
     });
     return params;
   }
@@ -91,3 +94,19 @@ class Network {
   }
 
 }
+Post.fromJson(Map<String, dynamic> json)=>{
+: id = json['id'];
+fullname = json['fullname'];
+number = json['number'];
+userId = json['userId'];
+
+Map<String, dynamic> toJson() => {
+  'id': id,
+  'fullname': fullname,
+  'number': number,
+  'userId': userId,
+}};
+
+
+
+
